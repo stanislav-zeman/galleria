@@ -36,11 +36,11 @@ export const PHOTOS: Photo[] = [
 		aperture: 'f/8',
 		shutter: '4s',
 		date: 'Feb 2026',
-		aspect: 1.5,
+		aspect: 0.667,
 		ang: 155,
 		hx: 28,
 		hy: 22,
-		key: 'placeholder.jpg'
+		key: 'placeholder-01.jpg'
 	},
 	{
 		id: 2,
@@ -50,11 +50,11 @@ export const PHOTOS: Photo[] = [
 		aperture: 'f/5.6',
 		iso: '400',
 		date: 'Feb 2026',
-		aspect: 0.75,
+		aspect: 1.5,
 		ang: 135,
 		hx: 70,
 		hy: 18,
-		key: 'placeholder.jpg'
+		key: 'placeholder-02.jpg'
 	},
 	{
 		id: 3,
@@ -67,11 +67,11 @@ export const PHOTOS: Photo[] = [
 		shutter: '1/250s',
 		iso: '200',
 		date: 'Feb 2026',
-		aspect: 1.5,
+		aspect: 0.606,
 		ang: 120,
 		hx: 40,
 		hy: 70,
-		key: 'placeholder.jpg'
+		key: 'placeholder-03.jpg'
 	},
 	{
 		id: 4,
@@ -84,11 +84,11 @@ export const PHOTOS: Photo[] = [
 		shutter: '1/30s',
 		iso: '1600',
 		date: 'Mar 2026',
-		aspect: 1.33,
+		aspect: 1.498,
 		ang: 200,
 		hx: 60,
 		hy: 80,
-		key: 'placeholder.jpg'
+		key: 'placeholder-04.jpg'
 	}
 ];
 

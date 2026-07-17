@@ -17,8 +17,23 @@
 		{ value: 'masonry', label: 'Masonry' }
 	];
 
+	// Keep LB_META_WIDTH in sync with the .lb-meta flex-basis CSS rule below.
+	// The panel's own max-width is a generous fallback (see .lb-panel); the real
+	// cap is computed from the viewport below so wide/landscape photos can use
+	// most of the available screen instead of being boxed into a fixed width.
+	const LB_META_WIDTH = 330;
+	const LB_PANEL_MAX_WIDTH = 1800;
+	const LB_BACKDROP_PADDING = 80; // matches .lb-backdrop's 40px padding, both sides
+	const LB_HERO_HEIGHT_VH = 0.88;
+
 	let grid = $state<GridStyle>('justified');
 	let selectedId = $state<number | null>(null);
+	let winHeight = $state(900);
+	let winWidth = $state(1400);
+	// Real aspect ratio of each photo's loaded image, keyed by id. Overrides the
+	// hand-authored `aspect` field once known, so a stale/wrong value in the data
+	// can't leave the hero box showing the wrong shape.
+	let loadedAspect = $state<Record<number, number>>({});
 
 	const ordered = $derived(orderedPhotos());
 	const sections = $derived(sectionsOf(ordered));
@@ -29,6 +44,30 @@
 			? `${String(currentIndex + 1).padStart(2, '0')} / ${String(ordered.length).padStart(2, '0')}`
 			: ''
 	);
+	const heroAspect = $derived(current ? (loadedAspect[current.id] ?? current.aspect) : 1);
+
+	function onHeroImageLoad(img: HTMLImageElement, id: number) {
+		if (img.naturalWidth && img.naturalHeight) {
+			loadedAspect[id] = img.naturalWidth / img.naturalHeight;
+		}
+	}
+
+	// Hero box follows the photo's true aspect ratio, fit within the panel's max
+	// height and width so the full image is always shown (never cropped) and
+	// uses as much of the viewport as it can. Width is capped first; for
+	// wide/landscape photos this also shrinks the height.
+	const heroBox = $derived.by(() => {
+		const maxH = winHeight * LB_HERO_HEIGHT_VH;
+		const maxPanelW = Math.min(LB_PANEL_MAX_WIDTH, winWidth - LB_BACKDROP_PADDING);
+		const maxW = Math.max(200, maxPanelW - LB_META_WIDTH);
+		let h = maxH;
+		let w = h * heroAspect;
+		if (w > maxW) {
+			w = maxW;
+			h = w / heroAspect;
+		}
+		return { w, h };
+	});
 
 	function open(id: number) {
 		selectedId = id;
@@ -70,7 +109,7 @@
 	/>
 </svelte:head>
 
-<svelte:window onkeydown={onKeydown} />
+<svelte:window onkeydown={onKeydown} bind:innerHeight={winHeight} bind:innerWidth={winWidth} />
 
 <div class="app">
 	<header class="header">
@@ -198,17 +237,24 @@
 		</button>
 
 		<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-		<div class="lb-panel" onclick={(e) => e.stopPropagation()}>
+		<div
+			class="lb-panel"
+			style="height:{heroBox.h}px;"
+			onclick={(e) => e.stopPropagation()}
+		>
 			<figure
 				class="lb-hero"
-				style="background:{gradient(current)}; aspect-ratio:{current.aspect};"
+				style="background:{gradient(current)}; width:{heroBox.w}px; height:{heroBox.h}px;"
 			>
 				<img
 					class="lb-hero-img"
 					src={imageUrl(current)}
 					alt={current.name}
 					decoding="async"
-					onerror={(e) => e.currentTarget.remove()}
+					onload={(e) => onHeroImageLoad(e.currentTarget as HTMLImageElement, current.id)}
+					onerror={(e) => {
+						(e.currentTarget as HTMLImageElement).style.visibility = 'hidden';
+					}}
 				/>
 			</figure>
 			<div class="lb-meta">
@@ -468,19 +514,15 @@
 	.lb-panel {
 		display: flex;
 		align-items: stretch;
-		max-width: 1120px;
-		width: 100%;
-		max-height: 82vh;
+		max-width: 1800px;
 		box-shadow: var(--g-shadow-lg);
 		border-radius: 8px;
 		animation: riseIn 0.3s ease;
 	}
 	.lb-hero {
 		position: relative;
-		flex: 1 1 auto;
+		flex: 0 0 auto;
 		margin: 0;
-		max-height: 82vh;
-		min-width: 0;
 		border-radius: 8px 0 0 8px;
 		box-shadow: inset 0 0 160px rgba(0, 0, 0, 0.22);
 		overflow: hidden;
@@ -490,7 +532,7 @@
 		inset: 0;
 		width: 100%;
 		height: 100%;
-		object-fit: cover;
+		object-fit: contain;
 	}
 	.lb-meta {
 		flex: 0 0 330px;
