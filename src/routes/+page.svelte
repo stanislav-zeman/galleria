@@ -4,6 +4,7 @@
 		sectionsOf,
 		specsOf,
 		gradient,
+		imageUrl,
 		figStyle,
 		GRID_CONTAINERS,
 		type GridStyle
@@ -111,7 +112,16 @@
 							onkeydown={(e) => tileKeydown(e, p.id)}
 						>
 							<div class="tile-clip">
-								<div class="tile-zoom" style="background:{gradient(p)}"></div>
+								<div class="tile-zoom" style="background:{gradient(p)}">
+									<img
+										class="tile-img"
+										src={imageUrl(p)}
+										alt=""
+										loading="lazy"
+										decoding="async"
+										onerror={(e) => e.currentTarget.remove()}
+									/>
+								</div>
 							</div>
 							<div class="tile-cap">
 								<span class="tile-name">{p.name}</span>
@@ -192,7 +202,15 @@
 			<figure
 				class="lb-hero"
 				style="background:{gradient(current)}; aspect-ratio:{current.aspect};"
-			></figure>
+			>
+				<img
+					class="lb-hero-img"
+					src={imageUrl(current)}
+					alt={current.name}
+					decoding="async"
+					onerror={(e) => e.currentTarget.remove()}
+				/>
+			</figure>
 			<div class="lb-meta">
 				<div class="lb-kicker">{counter} · {current.category}</div>
 				<h3>{current.name}</h3>
@@ -371,6 +389,13 @@
 		inset: 0;
 		transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
 	}
+	.tile-img {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
 	.tile:hover .tile-zoom {
 		transform: scale(1.05);
 	}
@@ -463,12 +488,21 @@
 		animation: riseIn 0.3s ease;
 	}
 	.lb-hero {
+		position: relative;
 		flex: 1 1 auto;
 		margin: 0;
 		max-height: 82vh;
 		min-width: 0;
 		border-radius: 8px 0 0 8px;
 		box-shadow: inset 0 0 160px rgba(0, 0, 0, 0.22);
+		overflow: hidden;
+	}
+	.lb-hero-img {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
 	}
 	.lb-meta {
 		flex: 0 0 330px;

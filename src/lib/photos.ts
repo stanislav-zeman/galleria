@@ -1,6 +1,9 @@
 // Photo catalogue + helpers for the Galleria gallery.
-// Placeholder imagery is generated as monochrome gradients (see `gradient`);
-// swap `gradient(p)` for a real `url(p.src)` once you have image files.
+// `gradient` renders a monochrome placeholder shown behind/under the real
+// photo (see `imageUrl`) so tiles have something to show while the image
+// loads, or if the bucket key 404s.
+
+import { PUBLIC_IMAGE_BASE_URL } from '$env/static/public';
 
 export interface Photo {
 	id: number;
@@ -20,6 +23,7 @@ export interface Photo {
 	ang: number; // gradient angle
 	hx: number; // highlight x (%)
 	hy: number; // highlight y (%)
+	key: string; // object key of the full-size image in the image bucket
 }
 
 export const PHOTOS: Photo[] = [
@@ -36,11 +40,12 @@ export const PHOTOS: Photo[] = [
 		aperture: 'f/8',
 		shutter: '4s',
 		iso: 'ISO 64',
-		date: 'Feb 2024',
+		date: 'Feb 2026',
 		aspect: 1.5,
 		ang: 155,
 		hx: 28,
-		hy: 22
+		hy: 22,
+		key: 'placeholder.jpg'
 	},
 	{
 		id: 2,
@@ -55,11 +60,12 @@ export const PHOTOS: Photo[] = [
 		aperture: 'f/5.6',
 		shutter: '1/60s',
 		iso: 'ISO 400',
-		date: 'Sep 2023',
+		date: 'Feb 2026',
 		aspect: 0.75,
 		ang: 135,
 		hx: 70,
-		hy: 18
+		hy: 18,
+		key: 'placeholder.jpg'
 	},
 	{
 		id: 3,
@@ -74,11 +80,12 @@ export const PHOTOS: Photo[] = [
 		aperture: 'f/4',
 		shutter: '1/250s',
 		iso: 'ISO 200',
-		date: 'Nov 2023',
+		date: 'Feb 2026',
 		aspect: 1.5,
 		ang: 120,
 		hx: 40,
-		hy: 70
+		hy: 70,
+		key: 'placeholder.jpg'
 	},
 	{
 		id: 4,
@@ -93,163 +100,12 @@ export const PHOTOS: Photo[] = [
 		aperture: 'f/2',
 		shutter: '1/30s',
 		iso: 'ISO 1600',
-		date: 'Jan 2025',
+		date: 'Mar 2026',
 		aspect: 1.33,
 		ang: 200,
 		hx: 60,
-		hy: 80
-	},
-	{
-		id: 5,
-		name: 'The Tenant',
-		category: 'Portrait',
-		desc: 'A dockworker at the end of a shift, framed against the hull he had spent eleven hours inside. Available light only.',
-		location: 'Gothenburg, Sweden',
-		tags: ['Environmental', 'Available light'],
-		camera: 'Hasselblad 907X',
-		lens: 'XCD 80mm f/1.9',
-		focal: '80mm',
-		aperture: 'f/2.8',
-		shutter: '1/125s',
-		iso: 'ISO 200',
-		date: 'Apr 2024',
-		aspect: 0.8,
-		ang: 160,
-		hx: 35,
-		hy: 30
-	},
-	{
-		id: 6,
-		name: 'Ridgeline',
-		category: 'Landscape',
-		desc: 'First snow on a treeline, seen across a valley of low cloud. The exposure was metered for the brightest ridge and let everything else fall.',
-		location: 'Dolomites, Italy',
-		tags: ['Mountains', 'Minimal', 'Snow'],
-		camera: 'Sony A7R V',
-		lens: 'FE 100-400mm',
-		focal: '280mm',
-		aperture: 'f/11',
-		shutter: '1/200s',
-		iso: 'ISO 100',
-		date: 'Dec 2024',
-		aspect: 1.6,
-		ang: 150,
-		hx: 24,
-		hy: 16
-	},
-	{
-		id: 7,
-		name: 'Atrium',
-		category: 'Architecture',
-		desc: 'Looking straight up the void of a library atrium. Perfectly symmetrical until you find the one open window on the fourth floor.',
-		location: 'Vienna, Austria',
-		tags: ['Symmetry', 'Look up', 'Modern'],
-		camera: 'Sony A7R V',
-		lens: 'FE 14mm f/1.8 GM',
-		focal: '14mm',
-		aperture: 'f/8',
-		shutter: '1/50s',
-		iso: 'ISO 800',
-		date: 'Mar 2024',
-		aspect: 1.0,
-		ang: 180,
-		hx: 50,
-		hy: 50
-	},
-	{
-		id: 8,
-		name: 'Fishmonger',
-		category: 'Street',
-		desc: 'A vendor mid-gesture in the wet market, caught in the narrow shaft of light between two awnings.',
-		location: 'Bergen, Norway',
-		tags: ['Market', 'Gesture', 'Colour'],
-		camera: 'Leica M11',
-		lens: 'Summilux 50mm f/1.4',
-		focal: '50mm',
-		aperture: 'f/2.8',
-		shutter: '1/320s',
-		iso: 'ISO 400',
-		date: 'Jun 2023',
-		aspect: 1.33,
-		ang: 110,
-		hx: 66,
-		hy: 40
-	},
-	{
-		id: 9,
-		name: 'Slack Water',
-		category: 'Nocturne',
-		desc: 'The harbour at the turn of the tide, when the surface goes to glass. A thirty-second frame that took three attempts to keep a boat from drifting.',
-		location: 'Stavanger, Norway',
-		tags: ['Harbour', 'Long exposure', 'Night'],
-		camera: 'Hasselblad 907X',
-		lens: 'XCD 38mm f/2.5',
-		focal: '38mm',
-		aperture: 'f/9',
-		shutter: '30s',
-		iso: 'ISO 64',
-		date: 'Oct 2024',
-		aspect: 1.78,
-		ang: 170,
-		hx: 80,
-		hy: 60
-	},
-	{
-		id: 10,
-		name: 'Understudy',
-		category: 'Portrait',
-		desc: 'A dancer resting between takes, half in costume, entirely out of character. The stillness was the picture.',
-		location: 'Copenhagen, Denmark',
-		tags: ['Backstage', 'Quiet', 'Available light'],
-		camera: 'Sony A7R V',
-		lens: 'FE 85mm f/1.4 GM',
-		focal: '85mm',
-		aperture: 'f/1.8',
-		shutter: '1/160s',
-		iso: 'ISO 640',
-		date: 'Apr 2024',
-		aspect: 0.75,
-		ang: 145,
-		hx: 38,
-		hy: 26
-	},
-	{
-		id: 11,
-		name: 'Causeway',
-		category: 'Landscape',
-		desc: 'A tidal road that only exists for four hours a day, photographed at the last safe moment before the water closed it.',
-		location: 'Outer Hebrides, Scotland',
-		tags: ['Coast', 'Leading line', 'Overcast'],
-		camera: 'Sony A7R V',
-		lens: 'FE 24-70mm f/2.8',
-		focal: '32mm',
-		aperture: 'f/11',
-		shutter: '1/125s',
-		iso: 'ISO 100',
-		date: 'Sep 2023',
-		aspect: 1.5,
-		ang: 135,
-		hx: 20,
-		hy: 75
-	},
-	{
-		id: 12,
-		name: 'Grid Failure',
-		category: 'Nocturne',
-		desc: 'A block during a rolling blackout, lit only by the headlights of one passing car. Metered on instinct.',
-		location: 'Oslo, Norway',
-		tags: ['Blackout', 'Long exposure', 'Night'],
-		camera: 'Sony A7R V',
-		lens: 'FE 35mm f/1.4 GM',
-		focal: '35mm',
-		aperture: 'f/1.4',
-		shutter: '1/15s',
-		iso: 'ISO 3200',
-		date: 'Jan 2025',
-		aspect: 1.33,
-		ang: 200,
-		hx: 70,
-		hy: 55
+		hy: 80,
+		key: 'placeholder.jpg'
 	}
 ];
 
@@ -301,6 +157,11 @@ const GREY: [string, string][] = [
 export function gradient(p: Photo): string {
 	const [a, b] = GREY[(p.id - 1) % GREY.length];
 	return `radial-gradient(135% 95% at ${p.hx}% ${p.hy}%, rgba(255,255,255,.5), rgba(255,255,255,0) 55%), linear-gradient(${p.ang}deg, ${a}, ${b})`;
+}
+
+/** Public URL of a photo's full-size image in the image bucket. */
+export function imageUrl(p: Photo): string {
+	return `${PUBLIC_IMAGE_BASE_URL}/${p.key}`;
 }
 
 function sortKey(p: Photo): number {
