@@ -1,42 +1,44 @@
-# sv
+# Galleria
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```sh
-# create a new project
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-pnpm dlx sv@0.16.3 create --template minimal --types ts --add prettier eslint tailwindcss="plugins:none" sveltekit-adapter="adapter:static" --install pnpm .
-```
+A photo gallery built with SvelteKit, prerendered to static HTML and deployed to GitHub Pages.
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Install dependencies, then start a dev server:
 
 ```sh
-npm run dev
+pnpm install
+pnpm dev
 
 # or start the server and open the app in a new browser tab
-npm run dev -- --open
+pnpm dev -- --open
 ```
 
 ## Building
 
-To create a production version of your app:
-
 ```sh
-npm run build
+pnpm build
 ```
 
-You can preview the production build with `npm run preview`.
+This prerenders the site to `build/` via `@sveltejs/adapter-static`. Preview the production build with `pnpm preview`.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Other useful scripts:
+
+```sh
+pnpm check   # svelte-check
+pnpm lint    # prettier --check + eslint
+pnpm format  # prettier --write
+```
+
+## Image hosting
+
+Photo metadata (title, tags, camera specs, etc.) lives in `src/lib/photos.ts`. The actual image files are hosted externally in a cloud storage bucket and referenced by each photo's `key` field; `imageUrl()` builds the full URL from the `PUBLIC_IMAGE_BASE_URL` env var plus that key.
+
+- **Locally:** copy `.env.example` to `.env` and set `PUBLIC_IMAGE_BASE_URL` to the bucket's public base URL.
+- **In CI:** set `PUBLIC_IMAGE_BASE_URL` as a repository variable (Settings → Secrets and variables → Actions → Variables) — both `ci.yml` and `deploy.yml` read it from there.
+
+If an image fails to load, the tile/lightbox falls back to a generated gradient placeholder instead of showing a broken image.
+
+## Deployment
+
+Pushing to `master` triggers `.github/workflows/deploy.yml`, which builds the site and publishes it to GitHub Pages at `https://<owner>.github.io/galleria/`. The `/galleria` base path is only applied to production builds (see `vite.config.ts`), so `pnpm dev` still runs at the domain root.
