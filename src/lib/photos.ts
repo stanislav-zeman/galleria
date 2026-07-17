@@ -8,16 +8,13 @@ import { PUBLIC_IMAGE_BASE_URL } from '$env/static/public';
 export interface Photo {
 	id: number;
 	name: string;
-	category: string;
-	desc: string;
-	location: string;
-	tags: string[];
-	camera: string;
-	lens: string;
-	focal: string;
-	aperture: string;
-	shutter: string;
-	iso: string;
+	desc?: string;
+	location?: string;
+	camera?: string;
+	lens?: string;
+	aperture?: string;
+	shutter?: string;
+	iso?: string; // digital sensitivity (e.g. "64") or a film stock (e.g. "Kodak Portra 400")
 	date: string; // "Mon YYYY", e.g. "Feb 2024"
 	aspect: number; // width / height
 	ang: number; // gradient angle
@@ -26,20 +23,18 @@ export interface Photo {
 	key: string; // object key of the full-size image in the image bucket
 }
 
+/** Shown in place of any metadata field that hasn't been filled in yet. */
+export const PLACEHOLDER = 'N/A';
+
 export const PHOTOS: Photo[] = [
 	{
 		id: 1,
 		name: 'Drift',
-		category: 'Landscape',
-		desc: 'A single fishing skiff holds its line against the current where the fjord narrows. Shot forty minutes before the light left the water entirely.',
 		location: 'Nærøyfjord, Norway',
-		tags: ['Fjord', 'Blue hour', 'Long exposure'],
 		camera: 'Hasselblad 907X',
 		lens: 'XCD 45mm f/3.5',
-		focal: '45mm',
 		aperture: 'f/8',
 		shutter: '4s',
-		iso: 'ISO 64',
 		date: 'Feb 2026',
 		aspect: 1.5,
 		ang: 155,
@@ -50,16 +45,10 @@ export const PHOTOS: Photo[] = [
 	{
 		id: 2,
 		name: 'Concrete Choir',
-		category: 'Architecture',
 		desc: 'The stair core of a brutalist concert hall, read as pure repetition. I waited for a cleaner between figures to keep the geometry unbroken.',
-		location: 'Berlin, Germany',
-		tags: ['Brutalism', 'Geometry', 'Interior'],
-		camera: 'Sony A7R V',
 		lens: 'FE 24mm f/1.4 GM',
-		focal: '24mm',
 		aperture: 'f/5.6',
-		shutter: '1/60s',
-		iso: 'ISO 400',
+		iso: '400',
 		date: 'Feb 2026',
 		aspect: 0.75,
 		ang: 135,
@@ -70,16 +59,13 @@ export const PHOTOS: Photo[] = [
 	{
 		id: 3,
 		name: 'Crossing, 08:11',
-		category: 'Street',
 		desc: 'Commuters compress at a signal in the financial district. The frame is built around the one figure who broke stride to look up.',
 		location: 'Tokyo, Japan',
-		tags: ['Rush hour', 'Monochrome', 'Candid'],
 		camera: 'Leica M11',
 		lens: 'Summicron 35mm f/2',
-		focal: '35mm',
 		aperture: 'f/4',
 		shutter: '1/250s',
-		iso: 'ISO 200',
+		iso: '200',
 		date: 'Feb 2026',
 		aspect: 1.5,
 		ang: 120,
@@ -90,16 +76,13 @@ export const PHOTOS: Photo[] = [
 	{
 		id: 4,
 		name: 'Nocturne No.4',
-		category: 'Nocturne',
 		desc: 'Sodium lamps on wet asphalt after the last train. Nothing was moved; the puddle did the composing.',
 		location: 'Reykjavík, Iceland',
-		tags: ['Night', 'Reflection', 'Rain'],
 		camera: 'Sony A7R V',
 		lens: 'FE 50mm f/1.2 GM',
-		focal: '50mm',
 		aperture: 'f/2',
 		shutter: '1/30s',
-		iso: 'ISO 1600',
+		iso: '1600',
 		date: 'Mar 2026',
 		aspect: 1.33,
 		ang: 200,
@@ -205,13 +188,11 @@ export interface Spec {
 
 export function specsOf(p: Photo): Spec[] {
 	return [
-		{ k: 'Camera', v: p.camera },
-		{ k: 'Lens', v: p.lens },
-		{ k: 'Focal length', v: p.focal },
-		{ k: 'Aperture', v: p.aperture },
-		{ k: 'Shutter', v: p.shutter },
-		{ k: 'ISO', v: p.iso },
-		{ k: 'Captured', v: p.date }
+		{ k: 'Camera', v: p.camera ?? PLACEHOLDER },
+		{ k: 'Lens', v: p.lens ?? PLACEHOLDER },
+		{ k: 'Aperture', v: p.aperture ?? PLACEHOLDER },
+		{ k: 'Shutter', v: p.shutter ?? PLACEHOLDER },
+		{ k: 'Film / ISO', v: p.iso ?? PLACEHOLDER }
 	];
 }
 

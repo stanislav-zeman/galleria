@@ -7,6 +7,7 @@
 		imageUrl,
 		figStyle,
 		GRID_CONTAINERS,
+		PLACEHOLDER,
 		type GridStyle
 	} from '$lib/photos';
 
@@ -125,7 +126,6 @@
 							</div>
 							<div class="tile-cap">
 								<span class="tile-name">{p.name}</span>
-								<span class="tile-cat">{p.category}</span>
 							</div>
 						</div>
 					{/each}
@@ -212,7 +212,7 @@
 				/>
 			</figure>
 			<div class="lb-meta">
-				<div class="lb-kicker">{counter} · {current.category}</div>
+				<div class="lb-kicker">{counter}</div>
 				<h3>{current.name}</h3>
 				<div class="lb-loc">
 					<svg
@@ -230,20 +230,18 @@
 							r="3"
 						/></svg
 					>
-					{current.location}
+					{current.location ?? PLACEHOLDER}
 				</div>
-				<p class="lb-desc">{current.desc}</p>
+				{#if current.desc}
+					<p class="lb-desc">{current.desc}</p>
+				{/if}
+				<div class="lb-date">{current.date}</div>
 				<div class="lb-specs">
 					{#each specsOf(current) as s (s.k)}
 						<div>
 							<div class="spec-k">{s.k}</div>
 							<div class="spec-v">{s.v}</div>
 						</div>
-					{/each}
-				</div>
-				<div class="lb-tags">
-					{#each current.tags as t (t)}
-						<span class="tag">{t}</span>
 					{/each}
 				</div>
 			</div>
@@ -410,8 +408,6 @@
 		background: linear-gradient(to top, rgba(10, 11, 18, 0.88), rgba(10, 11, 18, 0));
 		display: flex;
 		align-items: flex-end;
-		justify-content: space-between;
-		gap: 8px;
 	}
 	.tile:hover .tile-cap {
 		opacity: 1;
@@ -422,14 +418,6 @@
 		line-height: 1.1;
 		color: #fff;
 	}
-	.tile-cat {
-		font-size: 10px;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: rgba(255, 255, 255, 0.72);
-		white-space: nowrap;
-	}
-
 	.iconbtn {
 		width: 38px;
 		height: 38px;
@@ -537,8 +525,13 @@
 		font-size: 14px;
 		line-height: 1.65;
 		color: color-mix(in srgb, var(--g-text) 82%, transparent);
-		margin: 0 0 24px;
+		margin: 0 0 8px;
 		text-wrap: pretty;
+	}
+	.lb-date {
+		font-size: 12px;
+		color: color-mix(in srgb, var(--g-text) 50%, transparent);
+		margin-bottom: 24px;
 	}
 	.lb-specs {
 		display: grid;
@@ -558,23 +551,6 @@
 		font-size: 15px;
 		color: var(--g-text);
 	}
-	.lb-tags {
-		display: flex;
-		gap: 7px;
-		flex-wrap: wrap;
-		margin-top: 24px;
-	}
-	.tag {
-		display: inline-flex;
-		align-items: center;
-		font-size: 11px;
-		letter-spacing: 0.02em;
-		padding: 3px 10px;
-		border-radius: 6px;
-		border: 1px solid var(--g-accent);
-		color: var(--g-accent);
-	}
-
 	@keyframes ovIn {
 		from {
 			opacity: 0;
