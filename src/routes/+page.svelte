@@ -239,7 +239,7 @@
 		<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 		<div
 			class="lb-panel"
-			style="height:{heroBox.h}px;"
+			style="width:{heroBox.w + LB_META_WIDTH}px; height:{heroBox.h}px;"
 			onclick={(e) => e.stopPropagation()}
 		>
 			<figure
