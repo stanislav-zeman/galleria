@@ -12,7 +12,11 @@ export default defineConfig({
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
-			adapter: adapter()
+			adapter: adapter(),
+			paths: {
+				// GitHub Pages serves this project from /galleria/, not the domain root
+				base: process.env.NODE_ENV === 'production' ? '/galleria' : ''
+			}
 		})
 	]
 });
