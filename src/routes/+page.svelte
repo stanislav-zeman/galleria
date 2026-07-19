@@ -30,6 +30,13 @@
 	const MOBILE_BREAKPOINT = 700;
 	const LB_MOBILE_PADDING = 24; // matches .lb-backdrop's 12px padding on mobile, both sides
 	const LB_MOBILE_HERO_HEIGHT_VH = 0.55;
+	// On mobile, prev/next sit in a row below the panel (see the matching
+	// @media rule) rather than beside it, so their height needs to be reserved
+	// out of the hero's height budget. Gap matches .lb-close's mobile inset so
+	// both floating controls sit the same distance from the panel.
+	const LB_NAV_GAP_MOBILE = 12;
+	const LB_NAV_BTN_SIZE = 38;
+	const LB_NAV_ROW_RESERVE_MOBILE = LB_NAV_BTN_SIZE + LB_NAV_GAP_MOBILE;
 
 	let grid = $state<GridStyle>('justified');
 	let selectedId = $state<number | null>(null);
@@ -67,7 +74,7 @@
 			// No sidebar to share width with here (meta stacks below instead), so
 			// the photo can claim nearly the full viewport width.
 			const maxW = winWidth - LB_MOBILE_PADDING;
-			const maxH = winHeight * LB_MOBILE_HERO_HEIGHT_VH;
+			const maxH = winHeight * LB_MOBILE_HERO_HEIGHT_VH - LB_NAV_ROW_RESERVE_MOBILE;
 			let w = maxW;
 			let h = w / heroAspect;
 			if (h > maxH) {
@@ -87,9 +94,9 @@
 		}
 		return { w, h };
 	});
-	// On mobile the panel's height comes from its stacked content (image + meta),
-	// not a fixed box, so only the width is pinned there; CSS handles max-height
-	// and scrolling for overflow.
+	// On mobile the panel's height comes from its stacked content (image +
+	// meta), not a fixed box, so only the width is pinned there; CSS handles
+	// max-height and scrolling for overflow.
 	const panelStyle = $derived(
 		isMobile
 			? `width:${heroBox.w}px;`
@@ -222,65 +229,57 @@
 				stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg
 			>
 		</button>
-		<button
-			type="button"
-			class="iconbtn lb-prev"
-			aria-label="Previous"
-			onclick={(e) => {
-				e.stopPropagation();
-				step(-1);
-			}}
-		>
-			<svg
-				width="20"
-				height="20"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="1.6"
-				stroke-linecap="round"
-				stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg
-			>
-		</button>
-		<button
-			type="button"
-			class="iconbtn lb-next"
-			aria-label="Next"
-			onclick={(e) => {
-				e.stopPropagation();
-				step(1);
-			}}
-		>
-			<svg
-				width="20"
-				height="20"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="1.6"
-				stroke-linecap="round"
-				stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg
-			>
-		</button>
-
 		<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-		<div class="lb-panel" style={panelStyle} onclick={(e) => e.stopPropagation()}>
-			<figure
-				class="lb-hero"
-				style="background:{gradient(current)}; width:{heroBox.w}px; height:{heroBox.h}px;"
-			>
-				<img
-					class="lb-hero-img"
-					src={imageUrl(current)}
-					alt={current.name}
-					decoding="async"
-					onload={(e) => onHeroImageLoad(e.currentTarget as HTMLImageElement, current.id)}
-					onerror={(e) => {
-						(e.currentTarget as HTMLImageElement).style.visibility = 'hidden';
-					}}
-				/>
-			</figure>
-			<PhotoDetail photo={current} {counter} />
+		<div class="lb-frame" onclick={(e) => e.stopPropagation()}>
+			<div class="lb-panel" style={panelStyle}>
+				<figure
+					class="lb-hero"
+					style="background:{gradient(current)}; width:{heroBox.w}px; height:{heroBox.h}px;"
+				>
+					<img
+						class="lb-hero-img"
+						src={imageUrl(current)}
+						alt={current.name}
+						decoding="async"
+						onload={(e) => onHeroImageLoad(e.currentTarget as HTMLImageElement, current.id)}
+						onerror={(e) => {
+							(e.currentTarget as HTMLImageElement).style.visibility = 'hidden';
+						}}
+					/>
+				</figure>
+				<PhotoDetail photo={current} {counter} />
+			</div>
+			<div class="lb-nav-row">
+				<button
+					type="button"
+					class="iconbtn lb-prev"
+					aria-label="Previous"
+					onclick={() => step(-1)}
+				>
+					<svg
+						width="20"
+						height="20"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.6"
+						stroke-linecap="round"
+						stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg
+					>
+				</button>
+				<button type="button" class="iconbtn lb-next" aria-label="Next" onclick={() => step(1)}>
+					<svg
+						width="20"
+						height="20"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.6"
+						stroke-linecap="round"
+						stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg
+					>
+				</button>
+			</div>
 		</div>
 	</div>
 {/if}
@@ -489,6 +488,17 @@
 		top: 20px;
 		right: 20px;
 	}
+	.lb-frame {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	.lb-nav-row {
+		display: flex;
+		gap: 12px;
+	}
+	/* Desktop/tablet: prev/next float at the sides, vertically centered, same
+	   fixed-to-viewport pattern as .lb-close. Overridden below for mobile. */
 	.lb-prev {
 		position: fixed;
 		left: 20px;
@@ -554,11 +564,13 @@
 			top: 12px;
 			right: 12px;
 		}
-		.lb-prev {
-			left: 8px;
+		.lb-frame {
+			gap: 12px;
 		}
+		.lb-prev,
 		.lb-next {
-			right: 8px;
+			position: static;
+			transform: none;
 		}
 		.lb-panel {
 			flex-direction: column;
