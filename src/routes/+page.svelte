@@ -487,6 +487,7 @@
 		position: fixed;
 		top: 20px;
 		right: 20px;
+		z-index: 1;
 	}
 	.lb-frame {
 		display: flex;
@@ -504,12 +505,14 @@
 		left: 20px;
 		top: 50%;
 		transform: translateY(-50%);
+		z-index: 1;
 	}
 	.lb-next {
 		position: fixed;
 		right: 20px;
 		top: 50%;
 		transform: translateY(-50%);
+		z-index: 1;
 	}
 	.lb-panel {
 		display: flex;
