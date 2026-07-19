@@ -25,6 +25,12 @@
 	const LB_PANEL_MAX_WIDTH = 1800;
 	const LB_BACKDROP_PADDING = 80; // matches .lb-backdrop's 40px padding, both sides
 	const LB_HERO_HEIGHT_VH = 0.88;
+	// Below this width the meta sidebar no longer fits next to the photo, so the
+	// lightbox stacks image-above-meta instead (see the matching @media rule).
+	// Keep MOBILE_BREAKPOINT in sync with that rule.
+	const MOBILE_BREAKPOINT = 700;
+	const LB_MOBILE_PADDING = 24; // matches .lb-backdrop's 12px padding on mobile, both sides
+	const LB_MOBILE_HERO_HEIGHT_VH = 0.55;
 
 	let grid = $state<GridStyle>('justified');
 	let selectedId = $state<number | null>(null);
@@ -45,6 +51,7 @@
 			: ''
 	);
 	const heroAspect = $derived(current ? (loadedAspect[current.id] ?? current.aspect) : 1);
+	const isMobile = $derived(winWidth < MOBILE_BREAKPOINT);
 
 	function onHeroImageLoad(img: HTMLImageElement, id: number) {
 		if (img.naturalWidth && img.naturalHeight) {
@@ -57,6 +64,19 @@
 	// uses as much of the viewport as it can. Width is capped first; for
 	// wide/landscape photos this also shrinks the height.
 	const heroBox = $derived.by(() => {
+		if (isMobile) {
+			// No sidebar to share width with here (meta stacks below instead), so
+			// the photo can claim nearly the full viewport width.
+			const maxW = winWidth - LB_MOBILE_PADDING;
+			const maxH = winHeight * LB_MOBILE_HERO_HEIGHT_VH;
+			let w = maxW;
+			let h = w / heroAspect;
+			if (h > maxH) {
+				h = maxH;
+				w = h * heroAspect;
+			}
+			return { w, h };
+		}
 		const maxH = winHeight * LB_HERO_HEIGHT_VH;
 		const maxPanelW = Math.min(LB_PANEL_MAX_WIDTH, winWidth - LB_BACKDROP_PADDING);
 		const maxW = Math.max(200, maxPanelW - LB_META_WIDTH);
@@ -68,6 +88,14 @@
 		}
 		return { w, h };
 	});
+	// On mobile the panel's height comes from its stacked content (image + meta),
+	// not a fixed box, so only the width is pinned there; CSS handles max-height
+	// and scrolling for overflow.
+	const panelStyle = $derived(
+		isMobile
+			? `width:${heroBox.w}px;`
+			: `width:${heroBox.w + LB_META_WIDTH}px; height:${heroBox.h}px;`
+	);
 
 	function open(id: number) {
 		selectedId = id;
@@ -237,11 +265,7 @@
 		</button>
 
 		<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-		<div
-			class="lb-panel"
-			style="width:{heroBox.w + LB_META_WIDTH}px; height:{heroBox.h}px;"
-			onclick={(e) => e.stopPropagation()}
-		>
+		<div class="lb-panel" style={panelStyle} onclick={(e) => e.stopPropagation()}>
 			<figure
 				class="lb-hero"
 				style="background:{gradient(current)}; width:{heroBox.w}px; height:{heroBox.h}px;"
@@ -609,6 +633,39 @@
 		to {
 			opacity: 1;
 			transform: none;
+		}
+	}
+
+	/* Below this width the meta sidebar no longer fits next to the photo, so the
+	   lightbox stacks image-above-meta instead. Keep this in sync with
+	   MOBILE_BREAKPOINT in the script. */
+	@media (max-width: 700px) {
+		.lb-backdrop {
+			padding: 12px;
+		}
+		.lb-close {
+			top: 12px;
+			right: 12px;
+		}
+		.lb-prev {
+			left: 8px;
+		}
+		.lb-next {
+			right: 8px;
+		}
+		.lb-panel {
+			flex-direction: column;
+			max-height: calc(100dvh - 24px);
+			overflow-y: auto;
+		}
+		.lb-hero {
+			flex: 0 0 auto;
+			border-radius: 8px 8px 0 0;
+		}
+		.lb-meta {
+			flex: 1 1 auto;
+			width: 100%;
+			border-radius: 0 0 8px 8px;
 		}
 	}
 </style>
