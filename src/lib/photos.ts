@@ -29,10 +29,10 @@ export const PLACEHOLDER = 'N/A';
 export const PHOTOS: Photo[] = [
 	{
 		id: 1,
-		name: 'Drift',
-		location: 'Nærøyfjord, Norway',
-		camera: 'Hasselblad 907X',
-		lens: 'XCD 45mm f/3.5',
+		name: 'drift',
+		location: 'nærøyfjord, norway',
+		camera: 'hasselblad 907x',
+		lens: 'xcd 45mm f/3.5',
 		aperture: 'f/8',
 		shutter: '4s',
 		date: 'Feb 2026',
@@ -41,6 +41,21 @@ export const PHOTOS: Photo[] = [
 		hx: 28,
 		hy: 22,
 		key: 'placeholder-01.jpg'
+	},
+	{
+		id: 11,
+		name: 'drift',
+		location: 'nærøyfjord, norway',
+		camera: 'hasselblad 907x',
+		lens: 'xcd 45mm f/3.5',
+		aperture: 'f/8',
+		shutter: '4s',
+		date: 'Feb 2026',
+		aspect: 0.667,
+		ang: 155,
+		hx: 28,
+		hy: 22,
+		key: 'placeholder-02.jpg'
 	},
 	{
 		id: 2,
@@ -74,6 +89,52 @@ export const PHOTOS: Photo[] = [
 		key: 'placeholder-03.jpg'
 	},
 	{
+		id: 5,
+		name: 'Drift',
+		location: 'Nærøyfjord, Norway',
+		camera: 'Hasselblad 907X',
+		lens: 'XCD 45mm f/3.5',
+		aperture: 'f/8',
+		shutter: '4s',
+		date: 'Feb 2026',
+		aspect: 0.667,
+		ang: 155,
+		hx: 28,
+		hy: 22,
+		key: 'placeholder-01.jpg'
+	},
+	{
+		id: 6,
+		name: 'Concrete Choir',
+		desc: 'The stair core of a brutalist concert hall, read as pure repetition. I waited for a cleaner between figures to keep the geometry unbroken.',
+		lens: 'FE 24mm f/1.4 GM',
+		aperture: 'f/5.6',
+		iso: '400',
+		date: 'Feb 2026',
+		aspect: 1.5,
+		ang: 135,
+		hx: 70,
+		hy: 18,
+		key: 'placeholder-02.jpg'
+	},
+	{
+		id: 7,
+		name: 'Crossing, 08:11',
+		desc: 'Commuters compress at a signal in the financial district. The frame is built around the one figure who broke stride to look up.',
+		location: 'Tokyo, Japan',
+		camera: 'Leica M11',
+		lens: 'Summicron 35mm f/2',
+		aperture: 'f/4',
+		shutter: '1/250s',
+		iso: '200',
+		date: 'Feb 2026',
+		aspect: 0.606,
+		ang: 120,
+		hx: 40,
+		hy: 70,
+		key: 'placeholder-03.jpg'
+	},
+	{
 		id: 4,
 		name: 'Nocturne No.4',
 		desc: 'Sodium lamps on wet asphalt after the last train. Nothing was moved; the puddle did the composing.',
@@ -89,6 +150,23 @@ export const PHOTOS: Photo[] = [
 		hx: 60,
 		hy: 80,
 		key: 'placeholder-04.jpg'
+	},
+	{
+		id: 12,
+		name: 'Nocturne No.4',
+		desc: 'Sodium lamps on wet asphalt after the last train. Nothing was moved; the puddle did the composing.',
+		location: 'Reykjavík, Iceland',
+		camera: 'Sony A7R V',
+		lens: 'FE 50mm f/1.2 GM',
+		aperture: 'f/2',
+		shutter: '1/30s',
+		iso: '1600',
+		date: 'Mar 2026',
+		aspect: 1.498,
+		ang: 200,
+		hx: 60,
+		hy: 80,
+		key: 'placeholder-03.jpg'
 	}
 ];
 
