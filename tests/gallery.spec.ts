@@ -65,7 +65,7 @@ test.describe('gallery', () => {
 		await page.goto('/');
 
 		await openPhoto(page, 'Concrete Choir');
-		const counter = page.locator('.lb-kicker');
+		const counter = page.locator('[data-slide-role="current"] .lb-kicker');
 		const initialCounter = await counter.textContent();
 
 		await page.getByRole('button', { name: 'Next' }).click();

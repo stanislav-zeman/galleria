@@ -49,7 +49,6 @@
 		background: var(--g-surface);
 		padding: 22px;
 		overflow: auto;
-		border-radius: 0 8px 8px 0;
 	}
 	.lb-kicker {
 		font-size: 11px;
@@ -110,7 +109,6 @@
 		.lb-meta {
 			flex: 1 1 auto;
 			width: 100%;
-			border-radius: 0 0 8px 8px;
 		}
 	}
 </style>
