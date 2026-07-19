@@ -1,3 +1,5 @@
+<img src="assets/icon.png" alt="" width="64" height="64" align="left" style="margin-right: 12px" />
+
 # Galleria
 
 A photo gallery built with SvelteKit, prerendered to static HTML and deployed to GitHub Pages.
